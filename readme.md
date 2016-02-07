@@ -1,5 +1,7 @@
 Shader-based audio processing stream.
 
+WIP.
+
 ```js
 var Processor = require('audio-shader');
 var Generator = require('audio-generator');
