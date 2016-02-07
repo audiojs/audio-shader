@@ -1,7 +1,7 @@
 {
   "name": "audio-shader",
   "version": "1.0.0",
-  "description": "Shader based audio processing node",
+  "description": "Shader based audio processing stream",
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
@@ -31,16 +31,7 @@
   },
   "homepage": "https://github.com/audio-lab/audio-shader#readme",
   "dependencies": {
-    "gl-buffer": "^2.1.2",
-    "gl-clear": "^2.0.0",
-    "gl-context": "^0.1.1",
-    "gl-fbo": "^2.0.5",
-    "gl-mat4": "^1.1.4",
-    "gl-matrix": "^2.3.1",
-    "gl-now": "^1.4.0",
     "gl-shader": "^4.2.0",
-    "gl-texture2d": "^2.0.10",
-    "gl-vao": "^1.2.1",
     "glsl-read-float": "^1.1.0",
     "glslify": "^5.0.2",
     "inherits": "^2.0.1",
