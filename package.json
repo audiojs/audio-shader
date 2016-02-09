@@ -4,8 +4,8 @@
   "description": "Shader based audio processing stream",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js",
-    "test:browser": "budo test.js"
+    "test": "node test/index.js",
+    "test:browser": "budo test/index.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,13 @@
     "sound",
     "dsp",
     "stackgl",
-    "webgl"
+    "webgl",
+    "shadertoy",
+    "headless-js",
+    "GPU sound",
+    "processing",
+    "gl",
+    "glsl"
   ],
   "author": "Dima Yvanow <dfcreative@gmail.com>",
   "license": "MIT",

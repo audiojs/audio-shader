@@ -73,7 +73,7 @@ function AudioShader (shaderCode, options) {
 		varying float time;
 		uniform sampler2D data;
 
-		${shaderCode}
+		${this.shaderCode}
 
 		void main (void) {
 			vec4 result = vec4(mainSound(time)${channels === 1 ? ', 0, 0, 0);' : channels === 3 ? ', 0);' : channels === 4 ? ');' : ', 0, 0);'}
@@ -100,6 +100,11 @@ function AudioShader (shaderCode, options) {
 		color: 1
 	});
 	this.framebuffer.bind();
+
+	//clean on end
+	this.on('end', function () {
+		throw 'Unimplemented';
+	});
 }
 
 inherits(AudioShader, Through);
