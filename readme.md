@@ -39,7 +39,7 @@ vec2 mainSound( float time ){
 }
 ```
 
-Audio-shader can also be used as a processing stream. It has interface of [audio-through](https://github.com/audio-lab/audio-through), which is basically a [transform stream](https://nodejs.org/api/stream.html#stream_class_stream_transform), so it can be safely used with other node streams.
+_Audio-shader_ can also be used as a processing stream. It inherits [audio-through](https://github.com/audio-lab/audio-through), which is basically a [transform stream](https://nodejs.org/api/stream.html#stream_class_stream_transform), so it can be used with other node streams.
 
 ```js
 var MusicXML = require('musicxml-to-pcm');
