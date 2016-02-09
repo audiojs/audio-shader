@@ -1,9 +1,14 @@
-#pragma glslify: packFloat = require(glsl-read-float)
+/**
+ * Float packing routine
+ *
+ * @module glsl-float
+ *
+ * http://stackoverflow.com/questions/17981163/webgl-read-pixels-from-floating-point-render-target
+ */
+//TODO: move out to glslify module
 
 precision mediump float;
 
-//http://stackoverflow.com/questions/17981163/webgl-read-pixels-from-floating-point-render-target
-//TODO: move out to glslify module
 float shift_right (float v, float amt) {
     v = floor(v) + 0.5;
     return floor(v / exp2(amt));
@@ -35,6 +40,4 @@ vec4 encode_float (float val) {
     return vec4(byte4, byte3, byte2, byte1);
 }
 
-void main (void) {
-	gl_FragColor = packFloat(0.1);
-}
+#pragma glslify: export(encode_float)

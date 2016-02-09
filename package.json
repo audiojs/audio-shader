@@ -31,8 +31,9 @@
   },
   "homepage": "https://github.com/audio-lab/audio-shader#readme",
   "dependencies": {
+    "gl-fbo": "^2.0.5",
     "gl-shader": "^4.2.0",
-    "glsl-read-float": "^1.1.0",
+    "gl-texture2d": "^2.0.10",
     "glslify": "^5.0.2",
     "inherits": "^2.0.1",
     "xtend": "^4.0.1"

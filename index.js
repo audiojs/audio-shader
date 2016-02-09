@@ -7,20 +7,8 @@ var inherits = require('inherits');
 var GL = require('./gl');
 var glslify = require('glslify');
 var Shader = require('gl-shader');
-var unpackFloat = require('glsl-read-float');
-
-
-//set up webgl canvas
-var w = 1024;
-var gl = GL(w, 1);
-var shader = Shader(gl, glslify('./vertex.glsl'), glslify('./fragment.glsl'));
-shader.bind();
-
-//set up 0...N rendering vertex (default size of the block)
-buffer = gl.createBuffer()
-gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 4, 4, -1]), gl.STATIC_DRAW);
-shader.attributes.position.pointer();
+var Texture = require('gl-texture2d');
+var Framebuffer = require('gl-fbo');
 
 
 /**
@@ -33,52 +21,110 @@ function AudioShader (fn, options) {
 	if (!(this instanceof AudioShader)) return new AudioShader(fn, options);
 
 	Through.call(this, options);
+
+	var w = this.inputFormat.samplesPerFrame;
+
+	//refine number of channels - vec4 is max output
+	var channels = this.inputFormat.channels = Math.min(this.inputFormat.channels, 4);
+
+	//set up webgl canvas
+	//TODO: think of sharing canvas between instances by updating canvas width
+	var gl = this.gl = GL(w, 1);
+
+	//FIXME: find out what does that, is it more performant or what?
+	gl.disable(gl.DEPTH_TEST);
+
+	//setup shader
+	var vecType = channels === 1 ? 'float' : channels === 3 ? 'vec3' : channels === 4 ? 'vec4' : 'vec2';
+	var shaderCode = vecType + ' mainSound( float time ){\n\
+		return vec2( sin(6.2831*440.0*time)*exp(-3.0*time) );\n\
+	\n}';
+
+	this.shader = Shader(gl, glslify('\
+		precision mediump float;\
+		attribute vec2 position;\
+		uniform float frameLength;\
+		uniform float sampleRate;\
+		uniform float lastTime;\
+		varying float time;\
+		void main (void) {\
+			gl_Position = vec4(position, 0, 1);\
+			time = lastTime + (position.x * 0.5 + 0.5) * frameLength / sampleRate;\
+		}\
+		', {inline: true}), glslify('#pragma glslify: packFloat = require(./glsl-float)', {inline:true}) + [
+		'precision mediump float;\
+		varying float time;\
+		uniform sampler2D data;',
+		shaderCode,
+		'void main (void) {',
+			'vec4 result = vec4(mainSound(time)' +
+			(channels === 1 ? ', 0, 0, 0);' : channels === 3 ? ', 0);' : channels === 4 ? ');' : ', 0, 0);'),
+			'gl_FragColor = result;',
+		'}'].join('\n'));
+
+	this.shader.bind();
+
+	//set up 0...N rendering vertex (default size of the block)
+	buffer = gl.createBuffer()
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 3, 3, -1]), gl.STATIC_DRAW);
+	this.shader.attributes.position.pointer();
+
+	//set up audio params
+	this.shader.uniforms.frameLength = w;
+	this.shader.uniforms.sampleRate = this.inputFormat.sampleRate;
+
+	//set framebuffer as a main target
+	this.framebuffer = new Framebuffer(gl, [w, 1], {
+		// preferFloat: true,
+		float: true,
+		depth: false,
+		color: 1
+	});
+	this.framebuffer.bind();
 }
 
 inherits(AudioShader, Through);
 
 
+
 /**
- * Send chunk to audio-shader, invoke done on return
+ * Send chunk to audio-shader, invoke done on return.
+ * The strategy: render each audio channel to it’s own line in result
+ * TODO: thing to replace with textures
+ * TODO: set rendering target not drawing buffer
+ * TODO: provide input channels as textures
+ * TODO: provide values of previous input/output to implement filters
  */
 AudioShader.prototype.process = function (chunk, done) {
-	//buffer rendering loop
-	// var bufL = this.mBuffer.getChannelData(0);
-	// var bufR = this.mBuffer.getChannelData(1);
-	// var numBlocks = this.mPlaySamples / numSamples;
-	// for( var j=0; j<numBlocks; j++ )
-	// {
-	// 	var off = j*this.mTmpBufferSamples;
+	var gl = this.gl;
 
-	// 	this.mRenderer.SetShaderConstant1F_Pos(l2, off / this.mSampleRate);
-	// 	this.mRenderer.DrawUnitQuad_XY(l1);
-	// 	this.mRenderer.GetPixelData(this.mData, this.mTextureDimensions, this.mTextureDimensions);
+	//set up current chunk as a texture
+	// var texture = new Texture(gl, chunk);
+	// this.shader.uniforms.data = texture.bind();
 
-	// 	for( var i=0; i<numSamples; i++ )
-	// 	{
-	// 		bufL[off+i] = -1.0 + 2.0*(this.mData[4*i+0]+256.0*this.mData[4*i+1])/65535.0;
-	// 		bufR[off+i] = -1.0 + 2.0*(this.mData[4*i+2]+256.0*this.mData[4*i+3])/65535.0;
-	// 	}
-	// }
+	//preset new time value
+	this.shader.uniforms.lastTime = this.time;
 
 	//render chunk
 	gl.drawArrays(gl.TRIANGLES, 0, 3);
 
+	var w = this.inputFormat.samplesPerFrame;
+
 	//read data from the render
-	//NOTE: reading floats back from drawing is not possible, need to hack
-	var result = new Uint8Array(w * 4);
-	gl.readPixels(0, 0, w, 1, gl.RGBA, gl.UNSIGNED_BYTE, result);
-	result = new Float32Array(result.buffer);
+	//NOTE: reading floats back from drawing is not possible, need pack them as rgba
+	var result = new Float32Array(w * 1 * 4);
+	gl.readPixels(0, 0, w, 1, gl.RGBA, gl.FLOAT, result);
 
 	//transform result to buffer channels (color channel per audio channel)
-	for (var channel = 0, l = Math.min(chunk.numberOfChannels, 4); channel < l; channel++) {
+	for (var channel = 0, l = Math.min(chunk.numberOfChannels, 1); channel < l; channel++) {
 		var cData = chunk.getChannelData(channel);
 		for (var i = 0; i < w; i++) {
-			cData[i] = -1 + 2 * result[channel * w + i];
+			cData[i] = result[i * 4 + channel];
 		}
 	}
 
-	setTimeout(done, 1000);
+	done();
 }
 
 
