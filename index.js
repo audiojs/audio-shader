@@ -5,7 +5,6 @@
 var Through = require('audio-through');
 var inherits = require('inherits');
 var GL = require('./gl');
-var glslify = require('glslify');
 var Shader = require('gl-shader');
 var Texture = require('gl-texture2d');
 var Framebuffer = require('gl-fbo');
@@ -17,8 +16,23 @@ var Framebuffer = require('gl-fbo');
  * @param {Function} fn Shader code
  * @param {Object} options Options
  */
-function AudioShader (fn, options) {
-	if (!(this instanceof AudioShader)) return new AudioShader(fn, options);
+function AudioShader (shaderCode, options) {
+	if (!(this instanceof AudioShader)) return new AudioShader(shaderCode, options);
+
+	//resolve options
+	if (!options) {
+		if (typeof shaderCode !== 'string') {
+			options = shaderCode || {};
+		}
+		else {
+			options = {};
+		}
+	}
+
+	//create a default shaderCode, if not defined
+	if (!options.shaderCode) {
+		options.shaderCode = shaderCode;
+	}
 
 	Through.call(this, options);
 
@@ -27,40 +41,44 @@ function AudioShader (fn, options) {
 	//refine number of channels - vec4 is max output
 	var channels = this.inputFormat.channels = Math.min(this.inputFormat.channels, 4);
 
+	//refine shader code, if not passed
+	if (!this.shaderCode) {
+		var vecType = channels === 1 ? 'float' : ('vec' + channels);
+		this.shaderCode = `${vecType} mainSound( float time ){
+			return ${vecType}( sin(6.2831*440.0*time)*exp(-3.0*time) );
+		}`;
+	}
+
 	//set up webgl canvas
 	//TODO: think of sharing canvas between instances by updating canvas width
 	var gl = this.gl = GL(w, 1);
 
-	//FIXME: find out what does that, is it more performant or what?
+	//FIXME: find out what that does, it is for performance or what?
 	gl.disable(gl.DEPTH_TEST);
 
 	//setup shader
-	var vecType = channels === 1 ? 'float' : channels === 3 ? 'vec3' : channels === 4 ? 'vec4' : 'vec2';
-	var shaderCode = vecType + ' mainSound( float time ){\n\
-		return vec2( sin(6.2831*440.0*time)*exp(-3.0*time) );\n\
-	\n}';
+	this.shader = Shader(gl, `
+		precision mediump float;
+		attribute vec2 position;
+		uniform float frameLength;
+		uniform float sampleRate;
+		uniform float lastTime;
+		varying float time;
 
-	this.shader = Shader(gl, glslify('\
-		precision mediump float;\
-		attribute vec2 position;\
-		uniform float frameLength;\
-		uniform float sampleRate;\
-		uniform float lastTime;\
-		varying float time;\
-		void main (void) {\
-			gl_Position = vec4(position, 0, 1);\
-			time = lastTime + (position.x * 0.5 + 0.5) * frameLength / sampleRate;\
-		}\
-		', {inline: true}), glslify('#pragma glslify: packFloat = require(./glsl-float)', {inline:true}) + [
-		'precision mediump float;\
-		varying float time;\
-		uniform sampler2D data;',
-		shaderCode,
-		'void main (void) {',
-			'vec4 result = vec4(mainSound(time)' +
-			(channels === 1 ? ', 0, 0, 0);' : channels === 3 ? ', 0);' : channels === 4 ? ');' : ', 0, 0);'),
-			'gl_FragColor = result;',
-		'}'].join('\n'));
+		void main (void) {
+			gl_Position = vec4(position, 0, 1);
+			time = lastTime + (position.x * 0.5 + 0.5) * frameLength / sampleRate;
+		}`,
+		`precision mediump float;
+		varying float time;
+		uniform sampler2D data;
+
+		${shaderCode}
+
+		void main (void) {
+			vec4 result = vec4(mainSound(time)${channels === 1 ? ', 0, 0, 0);' : channels === 3 ? ', 0);' : channels === 4 ? ');' : ', 0, 0);'}
+			gl_FragColor = result;
+		}`);
 
 	this.shader.bind();
 
