@@ -1,7 +1,5 @@
 Webgl-based audio processing stream.
 
-## Usage
-
 [![npm install audio-shader](https://nodei.co/npm/audio-shader.png?mini=true)](https://npmjs.org/package/audio-shader/)
 
 ```js
@@ -19,16 +17,19 @@ ShaderSound(`
 .pipe(Speaker());
 ```
 
-## API
+### API
 
-API is fully compatible with [shadertoy](https://www.shadertoy.com/) to safely copy-paste code and run it locally. Note that shadertoy limits output sound to `60s`, whereas _audio-shader_ runs till it is stoped.
+API is fully compatible with [shadertoy](https://www.shadertoy.com/) sound to safely copy-paste and run it’s code locally. Note that shadertoy limits output sound to `60s`, whereas _audio-shader_ runs till it is stoped.
 
-It might be found helpful to use [glslify](https://www.npmjs.com/package/glslify) to get code inserted neatly.
+It also might be found helpful to use [glslify](https://www.npmjs.com/package/glslify) to get code inserted neatly:
 
 ```js
+//index.js
+var Shader = require('audio-shader');
+var Speaker = require('speaker');
 var glslify = require('glslify');
 
-ShaderSound(glslity('./sound.glsl')).pipe(Speaker());
+Shader(glslity('./sound.glsl')).pipe(Speaker());
 ```
 
 ```glsl
@@ -38,9 +39,7 @@ vec2 mainSound( float time ){
 }
 ```
 
-Audio-shader can also be used as a processing stream.
-
-It has interface of [audio-through](https://github.com/audio-lab/audio-through), which is basically a [transform stream](https://nodejs.org/api/stream.html#stream_class_stream_transform), so you can safely use it with other node streams.
+Audio-shader can also be used as a processing stream. It has interface of [audio-through](https://github.com/audio-lab/audio-through), which is basically a [transform stream](https://nodejs.org/api/stream.html#stream_class_stream_transform), so it can be safely used with other node streams.
 
 ```js
 var MusicXML = require('musicxml-to-pcm');
@@ -49,12 +48,16 @@ var Speaker = require('speaker');
 
 MusicXML()
 .pipe(Processor(`
+	vec2 main (float time) {
+		//TODO test this example and document it, shadertoy is down
+		return vec2();
+	}
 `))
 .pipe(Speaker());
 ```
 
 
-## Related
+### Related
 
 > [shadertoy](https://www.shadertoy.com) — sound playground online.<br/>
 > [glslify](https://www.npmjs.com/package/glslify) — require glsl-packages in browserify fashion.<br/>
