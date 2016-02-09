@@ -65,3 +65,5 @@ test('Noisy', function (done) {
 
 	setTimeout(done, 5000);
 });
+
+test('audio-shader vs audio-through')

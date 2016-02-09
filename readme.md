@@ -1,5 +1,7 @@
 Webgl-based audio processing stream.
 
+## Usage
+
 [![npm install audio-shader](https://nodei.co/npm/audio-shader.png?mini=true)](https://npmjs.org/package/audio-shader/)
 
 ```js
@@ -17,9 +19,11 @@ ShaderSound(`
 .pipe(Speaker());
 ```
 
-API is fully compatible with [shadertoy](https://www.shadertoy.com/) to safely copy-paste code and run it locally. Note that shadertoy limits output sound duration to `60s`, whereas with _audio-shader_ you’re not restricted in time.
+## API
 
-You might find it helpful to use [glslify](https://www.npmjs.com/package/glslify) to get code inserted neatly.
+API is fully compatible with [shadertoy](https://www.shadertoy.com/) to safely copy-paste code and run it locally. Note that shadertoy limits output sound to `60s`, whereas _audio-shader_ runs till it is stoped.
+
+It might be found helpful to use [glslify](https://www.npmjs.com/package/glslify) to get code inserted neatly.
 
 ```js
 var glslify = require('glslify');
@@ -50,7 +54,7 @@ MusicXML()
 ```
 
 
-### Related
+## Related
 
 > [shadertoy](https://www.shadertoy.com) — sound playground online.<br/>
 > [glslify](https://www.npmjs.com/package/glslify) — require glsl-packages in browserify fashion.<br/>
