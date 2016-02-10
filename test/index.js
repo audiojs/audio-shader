@@ -23,7 +23,7 @@ test('No-params', function (done) {
 	setTimeout(done, 500);
 });
 
-test.only('Glslify', function (done) {
+test('Glslify', function (done) {
 	Shader(glslify('./sounds/sine'))
 	.pipe(Speaker());
 
