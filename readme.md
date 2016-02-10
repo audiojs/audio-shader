@@ -29,7 +29,7 @@ var Shader = require('audio-shader');
 var Speaker = require('speaker');
 var glslify = require('glslify');
 
-Shader(glslity('./sound.glsl')).pipe(Speaker());
+Shader(glslify('./sound.glsl')).pipe(Speaker());
 ```
 
 ```glsl
