@@ -56,22 +56,39 @@ function AudioShader (shaderCode, options) {
 	//FIXME: find out what that does, it is for performance or what?
 	gl.disable(gl.DEPTH_TEST);
 
+	//set of global variables
+	var globals = `
+		precision mediump float;
+		precision mediump int;
+
+		uniform vec3      iResolution;           // viewport resolution (in pixels)
+		uniform float     iGlobalTime;           // shader playback time (in seconds)
+		uniform float     iTimeDelta;            // render time (in seconds)
+		uniform int       iFrame;                // shader playback frame
+		uniform float     iChannelTime[4];       // channel playback time (in seconds)
+		uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)
+		uniform sampler2D iChannel0;             // input channel1
+		uniform sampler2D iChannel1;             // input channel2
+		uniform sampler2D iChannel2;             // input channel3
+		uniform sampler2D iChannel3;             // input channel4
+		uniform vec4      iDate;                 // (year, month, day, time in seconds)
+		uniform float     iSampleRate;           // sound sample rate (i.e., 44100)
+	`;
+
 	//setup shader
 	this.shader = Shader(gl, `
-		precision mediump float;
+		${globals}
+
 		attribute vec2 position;
-		uniform float frameLength;
-		uniform float sampleRate;
-		uniform float lastTime;
 		varying float time;
 
 		void main (void) {
 			gl_Position = vec4(position, 0, 1);
-			time = lastTime + (position.x * 0.5 + 0.5) * frameLength / sampleRate;
-		}`,
-		`precision mediump float;
+			time = iGlobalTime + (position.x * 0.5 + 0.5) * iResolution.x / iSampleRate;
+		}`,	`
+		${globals}
+
 		varying float time;
-		uniform sampler2D data;
 
 		${this.shaderCode}
 
@@ -89,8 +106,8 @@ function AudioShader (shaderCode, options) {
 	this.shader.attributes.position.pointer();
 
 	//set up audio params
-	this.shader.uniforms.frameLength = w;
-	this.shader.uniforms.sampleRate = this.inputFormat.sampleRate;
+	this.shader.uniforms.iResolution = [w, channels, 1];
+	this.shader.uniforms.iSampleRate = this.inputFormat.sampleRate;
 
 	//set framebuffer as a main target
 	this.framebuffer = new Framebuffer(gl, [w, 1], {
@@ -127,7 +144,7 @@ AudioShader.prototype.process = function (chunk, done) {
 	// this.shader.uniforms.data = texture.bind();
 
 	//preset new time value
-	this.shader.uniforms.lastTime = this.time;
+	this.shader.uniforms.iGlobalTime = this.time;
 
 	//render chunk
 	gl.drawArrays(gl.TRIANGLES, 0, 3);
