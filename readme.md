@@ -4,7 +4,7 @@ Webgl-based audio processing stream.
 
 ```js
 var ShaderSound = require('audio-shader');
-var Speker = require('audio-speaker');
+var Speaker = require('audio-speaker');
 
 //Create shader stream based on sound processing function
 ShaderSound(`
