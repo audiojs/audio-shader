@@ -31,16 +31,35 @@ test('Glslify', function (done) {
 });
 
 
-test('Shadertoy env', function (done) {
+test.skip('Shadertoy env', function (done) {
 	Shader(`
-	`).pipe(Speaker());
+		vec2 mainSound (float time) {
+			return vec2(texture2D(), texture2D());
+		}
+	`)
+	.pipe(Speaker());
 
 	setTimeout(done, 1000);
 });
 
 test('Moving average filter');
 
-test('Transform');
+test.skip('Transform', function (done) {
+	Shader(`
+		vec2 mainSound (float time) {
+			return vec2(texture2D(), texture2D());
+		}
+	`)
+	.pipe(Speaker());
+
+	setTimeout(done, 1000);
+});
+
+test.skip('Multiple inputs', function () {
+	var mixer = Shader(`
+
+	`)
+});
 
 test('Mono channel');
 

@@ -57,6 +57,7 @@ function AudioShader (shaderCode, options) {
 	gl.disable(gl.DEPTH_TEST);
 
 	//set of global variables
+	//TODO: add iChannelN.time & iChannelN.resolution
 	var globals = `
 		precision mediump float;
 		precision mediump int;
@@ -65,14 +66,14 @@ function AudioShader (shaderCode, options) {
 		uniform float     iGlobalTime;           // shader playback time (in seconds)
 		uniform float     iTimeDelta;            // render time (in seconds)
 		uniform int       iFrame;                // shader playback frame
+		uniform vec4      iDate;                 // (year, month, day, time in seconds)
+		uniform float     iSampleRate;           // sound sample rate (i.e., 44100)
 		uniform float     iChannelTime[4];       // channel playback time (in seconds)
 		uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)
 		uniform sampler2D iChannel0;             // input channel1
 		uniform sampler2D iChannel1;             // input channel2
 		uniform sampler2D iChannel2;             // input channel3
 		uniform sampler2D iChannel3;             // input channel4
-		uniform vec4      iDate;                 // (year, month, day, time in seconds)
-		uniform float     iSampleRate;           // sound sample rate (i.e., 44100)
 	`;
 
 	//setup shader
@@ -106,7 +107,7 @@ function AudioShader (shaderCode, options) {
 	this.shader.attributes.position.pointer();
 
 	//set up audio params
-	this.shader.uniforms.iResolution = [w, channels, 1];
+	this.shader.uniforms.iResolution = [w, 1, 1];
 	this.shader.uniforms.iSampleRate = this.inputFormat.sampleRate;
 
 	//set framebuffer as a main target
@@ -139,17 +140,32 @@ inherits(AudioShader, Through);
 AudioShader.prototype.process = function (chunk, done) {
 	var gl = this.gl;
 
-	//set up current chunk as a texture
-	// var texture = new Texture(gl, chunk);
-	// this.shader.uniforms.data = texture.bind();
+	var w = this.inputFormat.samplesPerFrame;
+	var channels = Math.min(chunk.numberOfChannels, this.inputFormat.channels);
+
+	//set up current chunk as a channels data
+	// for (var channel = 0; channel < channels; channel++) {
+	// 	var texture = new Texture(gl, chunk.getChannelData(channel));
+	// 	this.shader.uniforms[`iChannel${channel}`] = texture.bind();
+	// 	this.shader.uniforms.iChannelResolution[channel] = [chunk.length, 1, 1];
+	// 	this.shader.uniforms.iChannelTime[channel] = [];
+	// }
 
 	//preset new time value
 	this.shader.uniforms.iGlobalTime = this.time;
+	this.shader.uniforms.iFrame = this.frame;
+	this.shader.uniforms.iTimeDelta = this.timeDelta * 0.001;
+	var d = new Date();
+	this.shader.uniforms.iDate = [
+		d.getFullYear(), // the year (four digits)
+		d.getMonth(),	   // the month (from 0-11)
+		d.getDate(),     // the day of the month (from 1-31)
+		d.getHours()*60.0*60 + d.getMinutes()*60 + d.getSeconds()
+	];
 
 	//render chunk
 	gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-	var w = this.inputFormat.samplesPerFrame;
 
 	//read data from the render
 	//NOTE: reading floats back from drawing is not possible, need pack them as rgba
@@ -157,7 +173,7 @@ AudioShader.prototype.process = function (chunk, done) {
 	gl.readPixels(0, 0, w, 1, gl.RGBA, gl.FLOAT, result);
 
 	//transform result to buffer channels (color channel per audio channel)
-	for (var channel = 0, l = Math.min(chunk.numberOfChannels, 1); channel < l; channel++) {
+	for (var channel = 0; channel < channels; channel++) {
 		var cData = chunk.getChannelData(channel);
 		for (var i = 0; i < w; i++) {
 			cData[i] = result[i * 4 + channel];
