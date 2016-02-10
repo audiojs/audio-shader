@@ -59,8 +59,8 @@ MusicXML()
 
 ### Related
 
-> [shadertoy](https://www.shadertoy.com) — sound playground online.<br/>
-> [glslify](https://www.npmjs.com/package/glslify) — require glsl-packages in browserify fashion.<br/>
-> [stack-gl](http://stack.gl) — set of components reducing complexity of working with webgl.<br/>
+> [shadertoy](https://www.shadertoy.com) — webgl playground, including GPU sound.<br/>
+> [glslify](https://www.npmjs.com/package/glslify) — require glsl-packages in [browserify](https://npmjs.org/package/browserify) fashion.<br/>
+> [stack.gl](http://stack.gl) — set of components reducing complexity of working with webgl.<br/>
 > [audio-through](https://github.com/audio-lab/audio-through) — audio processing stream for node/browser.<br/>
 > [gl-compute](https://www.npmjs.com/package/gl-compute) — computations on shaders.<br/>
