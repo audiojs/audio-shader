@@ -17,8 +17,8 @@
     ]
   },
   "browser": {
-    "nogl-shader-output": "nogl-shader-output",
-    "nogl": "nogl"
+    "nogl-shader-output": "gl-shader-output",
+    "nogl": "webgl-context"
   },
   "keywords": [
     "shader",
