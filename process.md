@@ -10,3 +10,8 @@
 	* but we should try passing by reference, or modifying texture, or something else
 * How to control pressure?
 	* No need. Shader is always sync-style coded, so each audio-through callback fetches data from the framebuffer, sets new framebuffer processing and sends the fetched data. It causes delay, but it ensures data is processed in a flow with no delays. Pressure is controlled by audio-speaker.
+
+* What are the principles, the difference audio-shadertoy and audio-shader?
+	* Audio-shader can take any input shader, the only contract is that the output is treated as audiobuffer. Shadertoy takes only source code.
+	* Audio-shader processes rect chunks - triangles, shadertoy processes fragments.
+	* Channel should not be represented by lines, as vec/mat form is easier to manipulate cross-channels.

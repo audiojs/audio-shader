@@ -3,11 +3,11 @@ Webgl-based audio processing stream.
 [![npm install audio-shader](https://nodei.co/npm/audio-shader.png?mini=true)](https://npmjs.org/package/audio-shader/)
 
 ```js
-var ShaderSound = require('audio-shader');
+var AudioShader = require('audio-shader');
 var Speaker = require('audio-speaker');
 
 //Create shader stream based on sound processing function
-ShaderSound(`
+AudioShader(`
 	vec2 mainSound( float time ){
 		return vec2( sin(6.2831*880.0*time)*exp(-3.0*time) );
 	}
@@ -29,7 +29,7 @@ var Shader = require('audio-shader');
 var Speaker = require('speaker');
 var glslify = require('glslify');
 
-Shader(glslify('./sound.glsl')).pipe(Speaker());
+Shader(glslify('./sound.glsl'), options?).pipe(Speaker());
 ```
 
 ```glsl
@@ -59,8 +59,7 @@ MusicXML()
 
 ### Related
 
-> [shadertoy](https://www.shadertoy.com) — webgl playground, including GPU sound.<br/>
-> [glslify](https://www.npmjs.com/package/glslify) — require glsl-packages in [browserify](https://npmjs.org/package/browserify) fashion.<br/>
-> [stack.gl](http://stack.gl) — set of components reducing complexity of working with webgl.<br/>
-> [audio-through](https://github.com/audio-lab/audio-through) — audio processing stream for node/browser.<br/>
-> [gl-compute](https://www.npmjs.com/package/gl-compute) — computations on shaders.<br/>
+* [nogl-shader-output](http://npmjs.org/nogl-shader-output) — process fragment shader in node.
+* [audio-through](https://github.com/audio-lab/audio-through) — audio processing stream for node/browser.
+* [gl-compute](https://www.npmjs.com/package/gl-compute) — computations on shaders.
+* [shadertoy-audio](https://www.npmjs.org/package/shadertoy-audio) — audio shader for processing shadertoy audio.

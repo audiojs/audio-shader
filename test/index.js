@@ -30,7 +30,6 @@ test('Glslify', function (done) {
 	setTimeout(done, 500);
 });
 
-
 test.skip('Shadertoy env', function (done) {
 	Shader(`
 		vec2 mainSound (float time) {
@@ -73,7 +72,7 @@ test.skip('Node-speaker', function () {
 
 });
 
-test('Noisy', function (done) {
+test.only('Noisy', function (done) {
 	this.timeout(Infinity);
 
 	Shader(glslify('./sounds/noisy'))

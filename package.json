@@ -16,6 +16,10 @@
       "glslify"
     ]
   },
+  "browser": {
+    "nogl-shader-output": "nogl-shader-output",
+    "nogl": "nogl"
+  },
   "keywords": [
     "shader",
     "audio",
@@ -28,7 +32,8 @@
     "GPU sound",
     "processing",
     "gl",
-    "glsl"
+    "glsl",
+    "nogl"
   ],
   "author": "Dima Yvanow <dfcreative@gmail.com>",
   "license": "MIT",
@@ -37,16 +42,17 @@
   },
   "homepage": "https://github.com/audio-lab/audio-shader#readme",
   "dependencies": {
-    "gl-fbo": "^2.0.5",
     "gl-shader": "^4.2.0",
-    "gl-texture2d": "^2.0.10",
+    "gl-shader-output": "^2.0.1",
     "inherits": "^2.0.1",
-    "webglew": "^1.0.5",
+    "nogl": "^1.1.0",
+    "nogl-shader-output": "^1.4.0",
+    "webgl-context": "^2.2.0",
     "xtend": "^4.0.1"
   },
   "devDependencies": {
-    "get-canvas-context": "^1.0.1",
-    "mocha": "^2.4.5",
+    "gl-fbo": "^2.0.5",
+    "gl-texture2d": "^2.0.10",
     "glslify": "^5.0.2",
     "audio-buffer-utils": "^2.0.1",
     "audio-context": "^0.1.0",

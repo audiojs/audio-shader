@@ -107,7 +107,7 @@ vec2 FBM22(vec2 x)
 
 vec2 mainSound(float time)
 {
-     vec2 audio = vec2(.0);
+    vec2 audio = vec2(.0);
     for (float t = 0.0; t < 1.0; t+=.5)
     {
         time = time+t;
@@ -122,6 +122,4 @@ vec2 mainSound(float time)
     audio += Noise11(time*380.0)*Noise11(time*880.0)* smoothstep(0.7,1.1,abs(foot)) * 2.;
 
     return clamp(audio, -1.0, 1.0) * smoothstep(0.0, 3.0, time) * smoothstep(60.0, 55.0, time);
-
-
 }
