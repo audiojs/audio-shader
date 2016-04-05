@@ -10,27 +10,29 @@ vec2 add = vec2(1.0, 0.0);
 
 //----------------------------------------------------------------------------------------
 //  1 out, 1 in ...
+
 float hash11(float p)
 {
 	vec2 p2 = fract(vec2(p) * MOD2);
     p2 += dot(p2.yx, p2.xy+19.19);
-	return fract(p2.x * p2.y);
+
+    return fract(p2.x * p2.y);
 }
+
 //----------------------------------------------------------------------------------------
 //  2 out, 1 in...
 vec2 hash21(float p)
 {
-	//p  = fract(p * MOD3);
+    //p  = fract(p * MOD3);
     vec3 p3 = fract(vec3(p) * MOD3);
     p3 += dot(p3.xyz, p3.yzx + 19.19);
    return fract(vec2(p3.x * p3.y, p3.z*p3.x))-.5;
 }
-
 //----------------------------------------------------------------------------------------
 ///  2 out, 2 in...
 vec2 hash22(vec2 p)
 {
-	vec3 p3 = fract(vec3(p.xyx) * MOD3);
+    vec3 p3 = fract(vec3(p.xyx) * MOD3);
     p3 += dot(p3.zxy, p3.yxz+19.19);
     return fract(vec2(p3.x * p3.y, p3.z*p3.x));
 }
@@ -45,6 +47,7 @@ vec2 Noise21(float x)
     return  mix( hash21(p), hash21(p + 1.0), f)-.5;
 
 }
+
 
 //----------------------------------------------------------------------------------------
 //  2 out, 1 in...

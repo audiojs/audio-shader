@@ -5,7 +5,7 @@ var glslify = require('glslify');
 var test = require('tst');
 
 
-test('Inline code', function (done) {
+test.only('Inline code', function (done) {
 	Shader(`
 		vec2 mainSound( float time ){
 			return vec2( sin(6.2831*880.0*time)*exp(-3.0*time) );
@@ -72,14 +72,13 @@ test.skip('Node-speaker', function () {
 
 });
 
-test.only('Noisy', function (done) {
+test.skip('Noisy', function (done) {
 	this.timeout(Infinity);
 
-	Shader(glslify('./sounds/noisy'))
-	.pipe(Speaker());
-
-
-	setTimeout(done, 5000);
+	var s = Shader(glslify('./sounds/noisy'))
+	// .pipe(Speaker());
+	// setTimeout(done, 5000);
+	s.process([], function () {});
 });
 
 test('audio-shader vs audio-through')

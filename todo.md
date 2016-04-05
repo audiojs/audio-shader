@@ -1,3 +1,7 @@
+* fix noisy example in node
+* think of threads for nogl-shader-output
+* try to hook up headless-gl still. It is faster. nogl-shader is unbearably slow.
+
 * think of providing input channels as multiple connections, where each channel is represented by a texture with N height. It is logical at least.
 * think of providing output as a texture of a height N, where each row is for separate channel.
 * facilitate interconnected audio-shaders so that they just pass textures one to another instead of converting/unconverting audio buffers. So to let us process sound in GPU with minimal possible delays.
