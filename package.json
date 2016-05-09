@@ -1,6 +1,6 @@
 {
   "name": "audio-shader",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Shader based audio processing stream",
   "main": "index.js",
   "scripts": {
