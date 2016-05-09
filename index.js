@@ -23,7 +23,7 @@ function AudioShader (shaderCode, options) {
 	Through.call(this, options);
 
 	//refine number of channels - vec4 is max output
-	var channels = this.inputFormat.channels = Math.min(this.inputFormat.channels, 4);
+	var channels = this.format.channels = Math.min(this.format.channels, 4);
 
 	//refine shader code, if not passed
 	if (!shaderCode) {
@@ -81,7 +81,7 @@ function AudioShader (shaderCode, options) {
 
 	//setup shader
 	this.draw = createShader(shader, {
-		width: this.inputFormat.samplesPerFrame,
+		width: this.format.samplesPerFrame,
 		height: 1
 	});
 
@@ -103,8 +103,8 @@ inherits(AudioShader, Through);
  * TODO: provide values of previous input/output to implement filters
  */
 AudioShader.prototype.process = function (chunk, done) {
-	var w = this.inputFormat.samplesPerFrame;
-	var channels = Math.min(chunk.numberOfChannels, this.inputFormat.channels);
+	var w = this.format.samplesPerFrame;
+	var channels = Math.min(chunk.numberOfChannels, this.format.channels);
 
 	//set up current chunk as a channels data
 	// for (var channel = 0; channel < channels; channel++) {
@@ -120,7 +120,7 @@ AudioShader.prototype.process = function (chunk, done) {
 	//render chunk
 	var result = this.draw({
 		iResolution: [w, 1, 1],
-		iSampleRate: this.inputFormat.sampleRate,
+		iSampleRate: this.format.sampleRate,
 		iGlobalTime: this.time,
 		iFrame: this.frame,
 		iDate: [

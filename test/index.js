@@ -3,6 +3,7 @@ var Generator = require('audio-generator');
 var Speaker = require('audio-speaker');
 var glslify = require('glslify');
 var test = require('tst');
+var Slice = require('audio-slice');
 
 
 test.only('Inline code', function (done) {
@@ -11,6 +12,7 @@ test.only('Inline code', function (done) {
 			return vec2( sin(6.2831*880.0*time)*exp(-3.0*time) );
 		}
 	`)
+	.pipe(Slice(1))
 	.pipe(Speaker());
 
 	setTimeout(done, 500);
