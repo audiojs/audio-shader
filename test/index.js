@@ -4,9 +4,10 @@ var Speaker = require('audio-speaker');
 var glslify = require('glslify');
 var test = require('tst');
 var Slice = require('audio-slice');
+var fs = require('fs');
 
 
-test.only('Inline code', function (done) {
+test('Inline code', function (done) {
 	Shader(`
 		vec2 mainSound( float time ){
 			return vec2( sin(6.2831*880.0*time)*exp(-3.0*time) );
@@ -26,7 +27,10 @@ test('No-params', function (done) {
 });
 
 test('Glslify', function (done) {
-	Shader(glslify('./sounds/sine'))
+	var src = fs.readFileSync(__dirname + '/sounds/sine.glsl', 'utf-8');
+
+	// Shader(glslify('./sounds/sine'))
+	Shader(src)
 	.pipe(Speaker());
 
 	setTimeout(done, 500);
@@ -77,7 +81,10 @@ test.skip('Node-speaker', function () {
 test.skip('Noisy', function (done) {
 	this.timeout(Infinity);
 
-	var s = Shader(glslify('./sounds/noisy'))
+	var src = fs.readFileSync(__dirname + '/sounds/noisy.glsl', 'utf-8');
+
+	var s = Shader(src)
+
 	// .pipe(Speaker());
 	// setTimeout(done, 5000);
 	s.process([], function () {});

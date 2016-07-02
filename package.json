@@ -13,6 +13,7 @@
   },
   "browserify": {
     "transform": [
+      "brfs",
       "glslify"
     ]
   },
@@ -42,6 +43,7 @@
   },
   "homepage": "https://github.com/audio-lab/audio-shader#readme",
   "dependencies": {
+    "brfs": "^1.4.3",
     "gl-shader": "^4.2.0",
     "gl-shader-output": "^2.0.1",
     "inherits": "^2.0.1",
