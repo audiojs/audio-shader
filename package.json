@@ -18,8 +18,8 @@
     ]
   },
   "browser": {
-    "nogl-shader-output": "nogl-shader-output",
-    "nogl": "nogl"
+    "nogl-shader-output": "gl-shader-output",
+    "nogl": "webgl-context"
   },
   "keywords": [
     "shader",
@@ -62,6 +62,7 @@
     "gl-fbo": "^2.0.5",
     "gl-texture2d": "^2.0.10",
     "glslify": "^5.0.2",
+    "is-browser": "^2.0.1",
     "tst": "^1.1.8"
   }
 }

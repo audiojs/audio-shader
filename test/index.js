@@ -5,6 +5,7 @@ var glslify = require('glslify');
 var test = require('tst');
 var Slice = require('audio-slice');
 var fs = require('fs');
+var isBrowser = require('is-browser');
 
 
 test('Inline code', function (done) {
@@ -78,16 +79,19 @@ test.skip('Node-speaker', function () {
 
 });
 
-test.skip('Noisy', function (done) {
+test('Noisy', function (done) {
+	//FIXME: this example does not work in node, guess the compiler is guilty
+	if (!isBrowser) return;
+
 	this.timeout(Infinity);
 
 	var src = fs.readFileSync(__dirname + '/sounds/noisy.glsl', 'utf-8');
 
 	var s = Shader(src)
 
-	// .pipe(Speaker());
+	.pipe(Speaker());
 	// setTimeout(done, 5000);
-	s.process([], function () {});
+	// s.process([], function () {});
 });
 
 test('audio-shader vs audio-through')
