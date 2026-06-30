@@ -43,6 +43,7 @@
   },
   "homepage": "https://github.com/audio-lab/audio-shader#readme",
   "dependencies": {
+    "audio-through": "^2.0.0",
     "brfs": "^1.4.3",
     "gl-shader": "^4.2.0",
     "gl-shader-output": "^2.0.1",
@@ -58,7 +59,6 @@
     "audio-generator": "^2.0.2",
     "audio-slice": "^1.1.0",
     "audio-speaker": "^1.2.2",
-    "audio-through": "^2.0.0",
     "gl-fbo": "^2.0.5",
     "gl-texture2d": "^2.0.10",
     "glslify": "^5.0.2",
