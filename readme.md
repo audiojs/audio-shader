@@ -19,6 +19,8 @@ AudioShader(`
 
 ### API
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/audiojs/audio-shader.svg)](https://greenkeeper.io/)
+
 API is fully compatible with [shadertoy](https://www.shadertoy.com/) to copy-paste and run it’s code locally. Note that shadertoy limits output sound to `60s`, whereas _audio-shader_ runs till it is stoped.
 
 It also might be found helpful to use [glslify](https://www.npmjs.com/package/glslify) to get code inserted neatly:
